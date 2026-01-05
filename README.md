@@ -1,73 +1,214 @@
-# Offline Resume RAG Chatbot
+# 🔍 Offline Resume RAG Chatbot
 
-An offline, privacy-first chatbot that can read and understand resumes from PDF files and answer queries about them. Built using LangChain, Hugging Face’s Transformers, and Streamlit.
+**A privacy-first, locally-runnable chatbot for semantic search and Q&A on resumes using RAG architecture**
 
-## Features
+## 🚀 Project Overview
 
-* **Offline Processing** – No API keys or internet connection required after setup.
-* **RAG (Retrieval-Augmented Generation)** – Accurately retrieves relevant sections from the resume before generating answers.
-* **PDF Resume Parsing** – Extracts structured text from PDF resumes.
-* **Local LLM Model** – Uses a locally stored Hugging Face model for responses.
+**Problem Solved**: Enables recruiters and hiring managers to efficiently search and extract information from resumes without relying on cloud services or exposing sensitive data.
 
-## Tech Stack
+**Why It Matters**: 
+- 100% offline operation ensures complete data privacy
+- Eliminates dependency on external APIs
+- Provides accurate, context-aware search results
 
-* **LangChain Community** – Document loaders and retrieval pipeline.
-* **Hugging Face Transformers** – Local language model inference.
-* **FAISS** – Vector store for efficient similarity search.
-* **Streamlit** – User-friendly web interface.
+**Real-world Applications**:
+- Recruitment agencies
+- HR departments
+- Hackathon judging
+- Resume screening automation
 
-## Installation
+## 🛠️ Tech Stack
 
-```powershell
-# Create and activate a virtual environment
-python -m venv venv
-venv\Scripts\activate
+| Category       | Technologies                                                                 |
+|----------------|-----------------------------------------------------------------------------|
+| **Language**   | Python 3.8+                                                                 |
+| **Framework**  | Streamlit (Web UI)                                                          |
+| **NLP**        | Hugging Face Transformers, Sentence-Transformers                            |
+| **Vector DB**  | FAISS (Facebook AI Similarity Search)                                       |
+| **PDF Parsing**| PyPDF                                                                       |
+| **Persistence**| Pickle (for document store)                                                 |
 
-# Install dependencies
-pip install streamlit langchain-community transformers faiss-cpu pypdf
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    A[User Uploads PDF] --> B[PDF Text Extraction]
+    B --> C[Text Chunking]
+    C --> D[Generate Embeddings]
+    D --> E[FAISS Indexing]
+    F[User Query] --> G[Query Embedding]
+    G --> H[Semantic Search]
+    E --> H
+    H --> I[Retrieve Relevant Chunks]
+    I --> J[Generate Response]
+    J --> K[Display Results]
 ```
 
-## Usage
+## ✨ Core Features
 
-```powershell
-# Run the app
+1. **Offline Processing**
+   - No API keys or internet required
+   - Local model inference
+   - Complete data privacy
+
+2. **Smart Chunking**
+   - Context-aware text splitting
+   - Configurable chunk size and overlap
+   - Metadata preservation
+
+3. **Semantic Search**
+   - FAISS-based similarity search
+   - Contextual understanding of queries
+   - Multiple resume support
+
+4. **Local LLM Integration**
+   - Uses `facebook/opt-125m` model
+   - Privacy-focused generation
+   - Customizable prompt engineering
+
+## 🔄 Workflow Pipeline
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Streamlit
+    participant Processor
+    participant FAISS
+    participant LLM
+    
+    User->>Streamlit: Upload PDF Resumes
+    Streamlit->>Processor: Extract & Chunk Text
+    Processor->>FAISS: Generate & Store Embeddings
+    User->>Streamlit: Enter Query
+    Streamlit->>FAISS: Semantic Search
+    FAISS-->>Streamlit: Return Relevant Chunks
+    Streamlit->>LLM: Generate Response
+    LLM-->>Streamlit: Return Formatted Answer
+    Streamlit-->>User: Display Results
+```
+
+## 📊 Visual Insights
+
+### Data Flow
+```mermaid
+graph LR
+    PDF[PDF Resume] -->|PyPDF| Text[Raw Text]
+    Text -->|Chunking| Chunks[Text Chunks]
+    Chunks -->|Sentence-Transformers| Embeddings[Vector Embeddings]
+    Embeddings -->|FAISS| Index[Vector Index]
+    Query[User Query] -->|Same Model| QueryEmbedding
+    QueryEmbedding -->|FAISS Search| Results[Relevant Chunks]
+    Results -->|LLM| Answer[Generated Response]
+```
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Python 3.8+
+- pip (Python package manager)
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/TecqHarishKrish/Offline-Resume-Rag-chatbot.git
+   cd Offline-Resume-Rag-chatbot
+   ```
+
+2. Create and activate virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the application:
+   ```bash
+   streamlit run app.py
+   ```
+
+## 💻 Usage Examples
+
+### 1. Start the Application
+```bash
 streamlit run app.py
 ```
 
-## How It Works
+### 2. Upload Resumes
+- Click "Browse files" to upload PDF resumes
+- Wait for processing to complete
 
-1. **Load Resume PDF** – Uses LangChain’s `PyPDFLoader` to extract text.
-2. **Chunk the Text** – Splits resume into small sections for better retrieval.
-3. **Embed the Text** – Converts chunks into vector embeddings using a local embedding model.
-4. **Store in FAISS** – Saves embeddings in an in-memory vector database.
-5. **Retrieve & Answer** – On user query, retrieves relevant chunks and uses the LLM to generate a response.
+### 3. Query the System
+Example queries:
+- "Show candidates with Python experience"
+- "Find resumes with machine learning skills"
+- "List candidates with cloud certifications"
 
-## Example
+### 4. View Results
+- Relevant resume sections are displayed
+- Sources are clearly cited
+- Raw context is available for verification
 
-* Upload your resume PDF.
-* Ask: *"What are my Python skills?"*
-* The chatbot will find the relevant section in your resume and answer accurately.
-
-## Project Structure
+## 📁 Folder Structure
 
 ```
-resume_rag_chatbot/
-├── app.py                # Main Streamlit app
+Offline-Resume-Rag-chatbot/
+├── app.py                # Main application
 ├── requirements.txt      # Dependencies
-├── venv/                 # Virtual environment
-└── README.md             # Project documentation
+├── README.md             # This file
+├── faiss_index.bin       # Generated FAISS index
+└── doc_store.pkl         # Document metadata store
 ```
 
-## Future Improvements
+## 📊 Results / Outputs
 
-* Support for multiple resumes.
-* Advanced filtering and ranking.
-* Export answers to PDF/Word.
+The application provides:
+- Clean, formatted responses to natural language queries
+- Source attribution for all information
+- Confidence scores for search results
+- Option to view full context
 
-## License
+## 🚀 Future Enhancements
 
-MIT License – Free to use and modify.
+### Performance
+- [ ] Optimize embedding model size
+- [ ] Add batch processing for large resume volumes
+- [ ] Implement caching for faster searches
 
-## Author
+### Features
+- [ ] Support for additional document formats (DOCX, TXT)
+- [ ] Customizable chunking strategies
+- [ ] Advanced filtering options
+- [ ] Multi-language support
 
-Developed by Harish Krish – AI & ML Enthusiast.
+### UI/UX
+- [ ] Dashboard with search analytics
+- [ ] Resume comparison view
+- [ ] Export functionality for search results
+
+## 🤝 Contribution Guidelines
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please ensure your code follows PEP 8 style guidelines and includes appropriate documentation.
+
+## 👨‍💻 Author & Credits
+
+- **Harish Krish** - [@TecqHarishKrish](https://github.com/TecqHarishKrish)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  Made with ❤️ and 🤖 by the open-source community
+</div>
